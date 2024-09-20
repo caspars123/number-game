@@ -1,0 +1,37 @@
+spring:
+  main:
+    banner-mode: "off"
+  datasource:
+    url: jdbc:postgresql://localhost:5099/number_game
+    username: db_owner
+    password: ChangeMe
+  flyway:
+    enabled: true
+    locations: 'classpath:db/migration'
+    placeholder-replacement: false
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+
+game:
+  jwt:
+    secret: +'&:qDQN1<L7GY:\K^L3}81YA
+  security:
+    cors:
+      allowed-origins: localhost
+  round:
+    multiplier: 9.9
+    runner:
+        fixedRate: 6000000
+        initialDelay: 10000000
+    duration: 10
+    newRoundStartDelay: 5
+    betDelayLeewayNanos: 500000000
+    rollResultDelayNanos: 1000000000
+
+logging:
+  config: classpath:logback-test.xml

@@ -1,0 +1,2 @@
+DELETE FROM bet;
+DELETE FROM round;

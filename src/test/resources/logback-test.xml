@@ -1,0 +1,10 @@
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<logger name="org.springframework" level="OFF"/>
+	<logger name="Hypersistence Optimizer" level="OFF"/>
+
+	<!-- Log Hibernate SQL queries and parameters -->
+	<!-- logger name="org.hibernate.SQL" level="DEBUG"/ -->
+	<!-- logger name="org.hibernate.type.descriptor.sql" level="TRACE"/ -->
+
+</configuration>

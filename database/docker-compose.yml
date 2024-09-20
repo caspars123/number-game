@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  postgres-number-game-1:
+    build: .
+    environment:
+      POSTGRES_PASSWORD: "ChangeMe"
+    ports:
+      - 5099:5432
