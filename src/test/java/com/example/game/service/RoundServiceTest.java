@@ -116,7 +116,6 @@ public class RoundServiceTest extends BaseTest {
 		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
-
 	@Test
 	public void test_play_round_user_1_wins() {
 		OffsetDateTime now = ROUND_2_START.plusSeconds(11);

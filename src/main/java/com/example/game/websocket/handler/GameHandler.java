@@ -25,7 +25,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 public class GameHandler extends TextWebSocketHandler {
 
-	private final CopyOnWriteArrayList<WebSocketSession> SESSIONS = new CopyOnWriteArrayList<>();
+	private static final CopyOnWriteArrayList<WebSocketSession> SESSIONS = new CopyOnWriteArrayList<>();
 
 	private final BetService betService;
 	private final JwtAuthenticationService jwtAuthenticationService;
