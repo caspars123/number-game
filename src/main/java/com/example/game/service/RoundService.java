@@ -54,7 +54,7 @@ public class RoundService extends BaseService {
 			.type(WebSocketMessageOutgoingType.ROUND_STARTED)
 			.build();
 
-		gameHandler.sendMessageActivePlayers(new Gson().toJson(message));
+		gameHandler.sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Transactional
@@ -102,7 +102,7 @@ public class RoundService extends BaseService {
 			.playerCount(round.getPlayerCount())
 			.build();
 
-		gameHandler.sendMessageActivePlayers(new Gson().toJson(message));
+		gameHandler.sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Transactional
@@ -115,6 +115,6 @@ public class RoundService extends BaseService {
 			.type(WebSocketMessageOutgoingType.ROUND_FINISHED)
 			.build();
 
-		gameHandler.sendMessageActivePlayers(new Gson().toJson(message));
+		gameHandler.sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 }

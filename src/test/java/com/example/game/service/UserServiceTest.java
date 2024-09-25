@@ -3,18 +3,24 @@ package com.example.game.service;
 import com.example.game.BaseTest;
 import com.example.game.db.model.User;
 import com.example.game.db.repository.UserRepository;
+import com.example.game.dto.model.JwtTokenDto;
 import com.example.game.dto.model.UpdatePasswordDto;
 import com.example.game.dto.model.UpdateUserDto;
 import com.example.game.dto.model.UserDto;
 import com.example.game.exception.ValidationException;
+import com.example.game.rest.jwt.JwtAuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import static com.example.game.DbHelper.NON_EXISTENT_USER_EMAIL;
 import static com.example.game.DbHelper.USER_1_BALANCE;
 import static com.example.game.DbHelper.USER_1_EMAIL;
 import static com.example.game.DbHelper.USER_1_ID;
@@ -37,6 +43,9 @@ public class UserServiceTest extends BaseTest {
 	private UserService service;
 
 	@Autowired
+	private JwtAuthenticationService jwtAuthenticationService;
+
+	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
 	@Test
@@ -57,6 +66,33 @@ public class UserServiceTest extends BaseTest {
 		UUID id = service.create(new UserDto(null, email, password, name, null));
 
 		assertUser(repository.findById(id).get(), email.trim().toLowerCase(), name, BigDecimal.ZERO);
+	}
+
+	@Test
+	public void test_authenticate_user() {
+		JwtTokenDto jwtTokenDto = service.authenticate(USER_1_EMAIL, USER_1_PASSWORD_TEXT);
+
+		jwtAuthenticationService.authenticate(jwtTokenDto.token(), false);
+
+		assertEquals(SecurityContextHolder.getContext().getAuthentication().getName(), USER_1_ID.toString());
+	}
+
+	@Test
+	public void test_authenticate_user_not_found() {
+		validateException(
+			() -> service.authenticate(NON_EXISTENT_USER_EMAIL, USER_1_PASSWORD_TEXT),
+			UsernameNotFoundException.class,
+			"User not found"
+		);
+	}
+
+	@Test
+	public void test_authenticate_wrong_password() {
+		validateException(
+			() -> service.authenticate(USER_1_EMAIL, USER_1_PASSWORD_TEXT + "123"),
+			AccessDeniedException.class,
+			"Wrong password"
+		);
 	}
 
 	@Test

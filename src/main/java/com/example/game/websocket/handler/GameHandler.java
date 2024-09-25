@@ -18,12 +18,14 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RequiredArgsConstructor
 @Component
 @Slf4j
 public class GameHandler extends TextWebSocketHandler {
 
-	private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
+	private final CopyOnWriteArrayList<WebSocketSession> SESSIONS = new CopyOnWriteArrayList<>();
 
 	private final BetService betService;
 	private final JwtAuthenticationService jwtAuthenticationService;
@@ -38,8 +40,8 @@ public class GameHandler extends TextWebSocketHandler {
 
 		log.debug("Message received: {}", message.getPayload());
 
-		String token = session.getHandshakeHeaders().containsKey("Authorization")
-			? session.getHandshakeHeaders().get("Authorization").getFirst()
+		String token = session.getHandshakeHeaders().containsKey(AUTHORIZATION)
+			? session.getHandshakeHeaders().get(AUTHORIZATION).getFirst()
 			: null;
 		jwtAuthenticationService.authenticate(token, true);
 
@@ -69,7 +71,7 @@ public class GameHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 		log.debug("Connection closed on session:  {} with status: {}", session.getId(), closeStatus);
 
-		sessions.remove(session);
+		SESSIONS.remove(session);
 	}
 
 	@Override
@@ -77,12 +79,12 @@ public class GameHandler extends TextWebSocketHandler {
 		return false;
 	}
 
-	private static WebSocketMessageIncoming parseMessage(WebSocketSession session, TextMessage message) throws IOException {
+	private WebSocketMessageIncoming parseMessage(WebSocketSession session, TextMessage message) throws IOException {
 		try {
 			return new Gson().fromJson(message.getPayload(), WebSocketMessageIncoming.class);
 
 		} catch (Exception e) {
-			sessions.remove(session);
+			SESSIONS.remove(session);
 			session.sendMessage(new TextMessage("Error parsing message"));
 			session.close();
 			return null;
@@ -91,21 +93,21 @@ public class GameHandler extends TextWebSocketHandler {
 
 	private void handleUserJoinedGameMessage(WebSocketSession session, WebSocketMessageIncoming webSocketMessage) throws IOException {
 
-		if (sessions.contains(session)) {
+		if (SESSIONS.contains(session)) {
 			session.sendMessage(new TextMessage("You have already joined the game!"));
 			return;
 		}
 
-		sessions.add(session);
+		SESSIONS.add(session);
 
 		session.sendMessage(new TextMessage("Welcome to the number guessing game!"));
 
-		sendMessageActivePlayers(String.format("Player %s joined the game", SecurityContextHolder.getContext().getAuthentication().getName()));
+		sendMessageToActivePlayers(String.format("Player %s joined the game", SecurityContextHolder.getContext().getAuthentication().getName()));
 	}
 
 	public void handlePlaceBetMessage(WebSocketSession session, WebSocketMessageIncoming message) throws IOException {
 
-		if (!sessions.contains(session)) {
+		if (!SESSIONS.contains(session)) {
 			session.sendMessage(new TextMessage("You need to join the game before you can place a bet"));
 			return;
 		}
@@ -120,22 +122,23 @@ public class GameHandler extends TextWebSocketHandler {
 		String commonMessagePart = String.format("a bet on number %d for %s euros", message.getChosenNumber(), message.getBetAmount());
 		session.sendMessage(new TextMessage("You have placed " + commonMessagePart));
 
-		sendMessageActivePlayers(String.format("Player %s placed %s", SecurityContextHolder.getContext().getAuthentication().getName(), commonMessagePart));
+		sendMessageToActivePlayers(String.format("Player %s placed %s", SecurityContextHolder.getContext().getAuthentication().getName(), commonMessagePart));
 	}
 
 	private void handleLeaveGameMessage(WebSocketSession session, WebSocketMessageIncoming webSocketMessage) throws IOException {
-		if (!sessions.contains(session)) {
+		if (!SESSIONS.contains(session)) {
 			session.sendMessage(new TextMessage("You have not joined the game"));
 			return;
 		}
 
 		session.sendMessage(new TextMessage("You have left the game"));
-		sessions.remove(session);
+		SESSIONS.remove(session);
+		sendMessageToActivePlayers(String.format("Player %s left the game", SecurityContextHolder.getContext().getAuthentication().getName())); // TODO: Set user name to context
 	}
 
-	public void sendMessageActivePlayers(String message) {
+	public void sendMessageToActivePlayers(String message) {
 		log.debug("Sending message:{}", message);
-		for (WebSocketSession session : sessions) {
+		for (WebSocketSession session : SESSIONS) {
 			try {
 				session.sendMessage(new TextMessage(message));
 			} catch (IOException e) {

@@ -17,6 +17,8 @@ public class DbHelper {
 
 	// User 2
 	public static final UUID USER_2_ID = UUID.fromString("3c6ccf80-8866-4905-83e3-72f34866e7ed");
+	public static final String USER_2_EMAIL = "user2@gmail.com";
+	public static final String USER_2_PASSWORD_TEXT = "password";
 	public static final BigDecimal USER_2_BALANCE = BigDecimal.valueOf(10000);
 	public static final String USER_2_NAME = "user 2";
 
@@ -36,9 +38,10 @@ public class DbHelper {
 	public static final int ROUND_2_USER_2_CHOSEN_NUMBER = 3;
 	public static final int ROUND_2_NO_WINNERS_NUMBER = 5;
 
-	// Non existEnt round
+	public static final UUID LIVE_ROUND_ID = ROUND_2_ID;
+
+	// Non existent data
 	public static final UUID NON_EXISTENT_ROUND_ID = UUID.randomUUID();
 	public static final OffsetDateTime NON_EXISTENT_ROUND_START = OffsetDateTime.parse("2024-09-18T12:00:00Z");
-
-	public static final UUID LIVE_ROUND_ID = ROUND_2_ID;
+	public static final String NON_EXISTENT_USER_EMAIL = "non-existent-user@gmail.com";
 }

@@ -85,7 +85,7 @@ public class RoundServiceTest extends BaseTest {
 			.type(WebSocketMessageOutgoingType.ROUND_STARTED)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class RoundServiceTest extends BaseTest {
 			.playerCount(2)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 
@@ -142,7 +142,7 @@ public class RoundServiceTest extends BaseTest {
 			.playerCount(2)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class RoundServiceTest extends BaseTest {
 			.playerCount(2)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Test
@@ -206,7 +206,7 @@ public class RoundServiceTest extends BaseTest {
 			.playerCount(2)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	@Test
@@ -227,7 +227,7 @@ public class RoundServiceTest extends BaseTest {
 			.type(WebSocketMessageOutgoingType.ROUND_FINISHED)
 			.build();
 
-		verify(gameHandler, times(1)).sendMessageActivePlayers(new Gson().toJson(message));
+		verify(gameHandler, times(1)).sendMessageToActivePlayers(new Gson().toJson(message));
 	}
 
 	private void assertRound(Round round, OffsetDateTime roundStart, int result, BigDecimal totalBet, BigDecimal totalWon, int playerCount, OffsetDateTime resultAt) {

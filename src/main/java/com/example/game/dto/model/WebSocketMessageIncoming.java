@@ -1,16 +1,18 @@
 package com.example.game.dto.model;
 
 import com.example.game.dto.enums.WebSocketMessageIncomingType;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
-@Data
+@AllArgsConstructor
+@Getter
 public class WebSocketMessageIncoming {
 
 	private WebSocketMessageIncomingType type;
 
-	private BigDecimal betAmount;
+	private Short chosenNumber;
 
-	private short chosenNumber;
+	private BigDecimal betAmount;
 }
