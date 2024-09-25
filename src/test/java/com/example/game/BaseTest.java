@@ -24,10 +24,9 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.example.game.DbHelper.NOW;
-import static com.example.game.DbHelper.USER_1_ID;
+import static com.example.game.DbHelper.USER_1_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,7 +53,7 @@ public abstract class BaseTest {
 
 		freezeClockAt(NOW);
 
-		setUser(USER_1_ID);
+		setUser(USER_1_NAME);
 
 		// Turn off multi transactions to database.
 		transactionTemplate.setPropagationBehavior(PROPAGATION_REQUIRED);
@@ -86,8 +85,8 @@ public abstract class BaseTest {
 		}
 	}
 
-	public void setUser(UUID id) {
-		UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(id.toString());
+	public void setUser(String username) {
+		UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 			new UsernamePasswordAuthenticationToken(

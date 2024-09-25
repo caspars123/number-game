@@ -4,6 +4,7 @@ import com.example.game.db.model.Role;
 import com.example.game.db.model.User;
 import com.example.game.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,14 +23,20 @@ public class JwtUserDetailsService implements UserDetailsService {
 	private final UserRepository userRepository;
 
 	@Transactional(readOnly = true)
-	public UserDetails loadUserByUsername(String id) {
+	public UserDetails loadUserByUsername(String name) {
 
-		User entity = userRepository.getReferenceById(UUID.fromString(id));
+		Optional<User> optionalUser = userRepository.findByNameAndActiveTrue(name);
+
+		if (optionalUser.isEmpty()) {
+			throw new AccessDeniedException("User not found");
+		}
+
+		User user = optionalUser.get();
 
 		return new org.springframework.security.core.userdetails.User(
-			entity.getId().toString(),
-			entity.getPassword(),
-			getAuthorities(entity.getRoles()));
+			user.getName(),
+			user.getPassword(),
+			getAuthorities(user.getRoles()));
 	}
 
 	private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

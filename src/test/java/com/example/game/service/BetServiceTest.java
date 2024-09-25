@@ -25,6 +25,7 @@ import static com.example.game.DbHelper.USER_1_BALANCE;
 import static com.example.game.DbHelper.USER_1_ID;
 import static com.example.game.DbHelper.USER_2_BALANCE;
 import static com.example.game.DbHelper.USER_2_ID;
+import static com.example.game.DbHelper.USER_2_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -113,7 +114,7 @@ public class BetServiceTest extends BaseTest {
 
 	private void testBet(short chosenValue, BigDecimal amount, UUID roundId, UUID userId, BigDecimal userBalance, OffsetDateTime timestamp) {
 		if (userId != USER_1_ID) {
-			setUser(userId);
+			setUser(USER_2_NAME);
 		}
 
 		UUID betId = service.placeBet(chosenValue, amount);

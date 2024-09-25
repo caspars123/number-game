@@ -54,14 +54,14 @@ public class UserService extends BaseService {
 		} catch (ResourceNotFoundException e) {
 			throw new UsernameNotFoundException("User not found");
 		}
-		authenticate(user.getId(), password);
-		UserDetails userDetails = userDetailsService.loadUserByUsername(user.getId().toString());
+		authenticateUser(user.getName(), password);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(user.getName());
 		return new JwtTokenDto(jwtTokenUtil.generateToken(userDetails));
 	}
 
-	private void authenticate(UUID id, String password) {
+	private void authenticateUser(String name, String password) {
 		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(id, password));
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, password));
 		} catch (Exception e) {
 			throw new AccessDeniedException("Wrong password", e);
 		}

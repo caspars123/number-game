@@ -74,7 +74,7 @@ public class UserServiceTest extends BaseTest {
 
 		jwtAuthenticationService.authenticate(jwtTokenDto.token(), false);
 
-		assertEquals(SecurityContextHolder.getContext().getAuthentication().getName(), USER_1_ID.toString());
+		assertEquals(SecurityContextHolder.getContext().getAuthentication().getName(), USER_1_NAME);
 	}
 
 	@Test

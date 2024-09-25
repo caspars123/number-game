@@ -6,18 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public class BaseService {
 
 	public final UserRepository userRepository;
 
 	public User getAuthenticatedUser() {
-		return userRepository.findById(UUID.fromString(
+		return userRepository.findByName(
 				SecurityContextHolder.getContext()
 					.getAuthentication()
-					.getName()))
+					.getName())
 			.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 }

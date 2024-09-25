@@ -13,6 +13,8 @@ public interface UserRepository extends BaseEntityRepository<User> {
 
 	Optional<User> findByNameAndActiveTrue(String name);
 
+	Optional<User> findByName(String name);
+
 	default User getByEmail(String email) {
 		return findByEmailAndActiveTrue(email.toLowerCase())
 			.orElseThrow(() -> new ResourceNotFoundException("User not found", Map.of("email", email)));

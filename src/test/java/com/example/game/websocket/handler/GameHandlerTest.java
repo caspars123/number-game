@@ -21,13 +21,12 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import static com.example.game.DbHelper.USER_1_EMAIL;
-import static com.example.game.DbHelper.USER_1_ID;
+import static com.example.game.DbHelper.USER_1_NAME;
 import static com.example.game.DbHelper.USER_1_PASSWORD_TEXT;
 import static com.example.game.DbHelper.USER_2_EMAIL;
-import static com.example.game.DbHelper.USER_2_ID;
+import static com.example.game.DbHelper.USER_2_NAME;
 import static com.example.game.DbHelper.USER_2_PASSWORD_TEXT;
 import static com.example.game.dto.enums.WebSocketMessageIncomingType.JOIN_GAME;
 import static com.example.game.dto.enums.WebSocketMessageIncomingType.LEAVE_GAME;
@@ -91,7 +90,7 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 	}
 
 	@Test
@@ -104,7 +103,7 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		handler.handleTextMessage(user1Session, joinGameMessage);
 		verify(user1Session, times(3)).sendMessage(any());
@@ -121,15 +120,15 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		setUpAuth(false);
 
 		handler.handleTextMessage(user2Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_ID);
+		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_NAME);
 
 		verify(user1Session, times(3)).sendMessage(any());
-		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_ID)));
+		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_NAME)));
 	}
 
 	@Test
@@ -142,14 +141,14 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		BigDecimal betAmount = BigDecimal.valueOf(100);
 		short chosenNumber = (short) 5;
 		TextMessage placeBetMessage = getTextMessage(PLACE_BET, chosenNumber, betAmount);
 
 		handler.handleTextMessage(user1Session, placeBetMessage);
-		checkPlaceBetMessagesSentToSession(user1Session, 4, USER_1_ID, chosenNumber, betAmount);
+		checkPlaceBetMessagesSentToSession(user1Session, 4, USER_1_NAME, chosenNumber, betAmount);
 
 		verify(betService, times(1)).placeBet(chosenNumber, betAmount);
 	}
@@ -181,34 +180,34 @@ public class GameHandlerTest extends BaseTest {
 
 		// Player 1 actions
 		handler.handleTextMessage(user1Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		BigDecimal player1BetAmount = BigDecimal.valueOf(100);
 		short player1ChosenNumber = (short) 5;
 		TextMessage player1PlaceBetMessage = getTextMessage(PLACE_BET, player1ChosenNumber, player1BetAmount);
 
 		handler.handleTextMessage(user1Session, player1PlaceBetMessage);
-		checkPlaceBetMessagesSentToSession(user1Session, 4, USER_1_ID, player1ChosenNumber, player1BetAmount);
+		checkPlaceBetMessagesSentToSession(user1Session, 4, USER_1_NAME, player1ChosenNumber, player1BetAmount);
 
 		verify(betService, times(1)).placeBet(player1ChosenNumber, player1BetAmount);
 
 		// Player 2 actions
 		setUpAuth(false);
 		handler.handleTextMessage(user2Session, joinGameMessage);
-		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_ID);
+		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_NAME);
 
 		verify(user1Session, times(5)).sendMessage(any());
-		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_ID)));
+		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_NAME)));
 
 		BigDecimal player2BetAmount = BigDecimal.valueOf(200);
 		short player2ChosenNumber = (short) 10;
 		TextMessage player2PlaceBetMessage = getTextMessage(PLACE_BET, player2ChosenNumber, player2BetAmount);
 
 		handler.handleTextMessage(user2Session, player2PlaceBetMessage);
-		checkPlaceBetMessagesSentToSession(user2Session, 4, USER_2_ID, player2ChosenNumber, player2BetAmount);
+		checkPlaceBetMessagesSentToSession(user2Session, 4, USER_2_NAME, player2ChosenNumber, player2BetAmount);
 
 		verify(user1Session, times(6)).sendMessage(any());
-		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s placed a bet on number %d for %s euros", USER_2_ID, player2ChosenNumber, player2BetAmount)));
+		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s placed a bet on number %d for %s euros", USER_2_NAME, player2ChosenNumber, player2BetAmount)));
 
 		verify(betService, times(2)).placeBet(any(Short.class), any());
 		verify(betService, times(1)).placeBet(player2ChosenNumber, player2BetAmount);
@@ -225,7 +224,7 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinTableMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		handler.handleTextMessage(user1Session, leaveGameMessage);
 		checkLeaveGameMessagesSentToSession(user1Session, 3);
@@ -256,21 +255,21 @@ public class GameHandlerTest extends BaseTest {
 
 		// Call the method to test
 		handler.handleTextMessage(user1Session, joinTableMessage);
-		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_ID);
+		checkJoinGameMessagesSentToSession(user1Session, 2, USER_1_NAME);
 
 		setUpAuth(false);
 		handler.handleTextMessage(user2Session, joinTableMessage);
-		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_ID);
+		checkJoinGameMessagesSentToSession(user2Session, 2, USER_2_NAME);
 
 		verify(user1Session, times(3)).sendMessage(any());
-		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_ID)));
+		verify(user1Session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", USER_2_NAME)));
 
 		setUpAuth(true);
 		handler.handleTextMessage(user1Session, leaveGameMessage);
 		checkLeaveGameMessagesSentToSession(user1Session, 4);
 
 		verify(user2Session, times(3)).sendMessage(any());
-		verify(user2Session, times(1)).sendMessage(new TextMessage(String.format("Player %s left the game", USER_1_ID)));
+		verify(user2Session, times(1)).sendMessage(new TextMessage(String.format("Player %s left the game", USER_1_NAME)));
 
 		setUpAuth(false);
 		handler.handleTextMessage(user2Session, leaveGameMessage);
@@ -279,16 +278,16 @@ public class GameHandlerTest extends BaseTest {
 		verify(user1Session, times(4)).sendMessage(any());
 	}
 
-	private void checkJoinGameMessagesSentToSession(WebSocketSession session, int totalMessagesSent, UUID userId) throws IOException {
+	private void checkJoinGameMessagesSentToSession(WebSocketSession session, int totalMessagesSent, String username) throws IOException {
 		verify(session, times(totalMessagesSent)).sendMessage(any());
 		verify(session, times(1)).sendMessage(new TextMessage("Welcome to the number guessing game!"));
-		verify(session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", userId)));
+		verify(session, times(1)).sendMessage(new TextMessage(String.format("Player %s joined the game", username)));
 	}
 
-	private void checkPlaceBetMessagesSentToSession(WebSocketSession session, int totalMessagesSent, UUID userId, short chosenNumber, BigDecimal betAmount) throws IOException {
+	private void checkPlaceBetMessagesSentToSession(WebSocketSession session, int totalMessagesSent, String username, short chosenNumber, BigDecimal betAmount) throws IOException {
 		verify(session, times(totalMessagesSent)).sendMessage(any());
 		verify(session, times(1)).sendMessage(new TextMessage(String.format("You have placed a bet on number %d for %s euros", chosenNumber, betAmount)));
-		verify(session, times(1)).sendMessage(new TextMessage(String.format("Player %s placed a bet on number %d for %s euros", userId, chosenNumber, betAmount)));
+		verify(session, times(1)).sendMessage(new TextMessage(String.format("Player %s placed a bet on number %d for %s euros", username, chosenNumber, betAmount)));
 	}
 
 	private void checkLeaveGameMessagesSentToSession(WebSocketSession session, int totalMessagesSent) throws IOException {
